@@ -1,0 +1,37 @@
+#! /usr/bin/perl
+
+#use strict;
+use DHCPClient2;
+
+#my $mac_address = `ifconfig |grep HW |cut -d: -f2-7|cut -dr -f3 |cut -d' ' -f2`;  # get the MAC address
+my $mac_address = "00:1E:37:2C:DF:51";
+
+my ( %vendor, $lladdr, $i ); $\ = "\n";
+my $c = 10;
+
+$lladdr = '00';
+
+ while ( ++$i )
+ { last if $i > $c; $lladdr .= ':' if $i % 2;
+  $lladdr .= sprintf "%" . X, int ( rand (16) );
+ }
+
+ print  "lladdr: $lladdr";
+# exit ( 0 );
+
+
+#my $dhcp = new Net::DHCPClient (
+#                                maccaddr => '0a:0a:0a:0a:0a:0a',
+#                                interface => 'eth0',
+#                               );
+
+my $dhcp = new Net::DHCPClient( 
+					macaddr => $lladdr,
+					interface => 'eth0',
+					debug => 1,
+					timeout => 5 ) or die "No dhcp server avaliable";
+
+$dhcp->discover( 61 => $lladdr );
+$dhcp->request;
+$dhcp->release;
+

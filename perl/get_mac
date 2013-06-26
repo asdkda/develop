@@ -1,0 +1,29 @@
+#! /usr/bin/perl
+
+use strict;
+
+print <<HERE;
+Your net interface name and mac address:
+HERE
+
+# ifconfig  |grep "^\w"| cut -c 39-55 | sed -n "1p"
+my $i=0;
+my $netif;
+my $mac;
+
+while ( $i < 10 ) {		# limit to 10 net interface
+	$i++;
+# get net interface name
+	$netif = ` ifconfig | grep \"^\\w\" | cut -d ' ' -f 1 | sed -n '$i p'`;
+	chomp($netif);
+	if ( $netif eq "lo" ) {
+		last;
+	}
+# get HWaddr
+	$mac = ` ifconfig | grep \"^\\w\" | cut -c 32-55 | sed -n '$i p'`;
+	chomp($mac);
+
+	printf "    [$netif]  mac $mac\n";
+}
+
+

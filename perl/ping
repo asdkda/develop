@@ -1,0 +1,59 @@
+#! /usr/bin/perl
+
+use Net::Ping;
+use strict;
+
+# log主要目錄的路徑，請修改成您的現況
+my $prefix="/home/gavin/workspace/perl";
+
+# 記錄檔路徑
+my $ping_log = "$prefix/ping.log";
+open(FHD, "> $ping_log") || die "$!\n";
+
+my $p = Net::Ping->new('icmp');
+
+# 欲偵測的主機 IP 列表，這裡只是舉例，請把它改成您管理的主機 IP
+my @HOST=qw( 192.168.1.1 192.168.1.100 192.168.1.101 );
+my $i;
+
+for ($i=0; $i<=$#HOST; $i++) {
+# 只 ping 一秒鐘，超過一秒鐘沒有反應，即視為斷訊
+# 若連通則 $result 值為 1，若斷訊 $result 值為 0
+    my $result=$p->ping($HOST[$i], 1);
+
+    my $now=get_time();
+# 寫入記錄檔 ping.log 中
+    if ( $result ) {
+        printf( "ping %-15s  [Success]    %s\n", $HOST[$i], $now );
+        #print FHD "ping $HOST[$i] success    $now\n";
+        my $temp = sprintf("ping %-15s  [Success]    %s\n", $HOST[$i], $now);
+        print FHD $temp;
+	}
+    else {
+        printf( "ping %-15s  [Failure]    %s\n", $HOST[$i], $now );
+    }
+}
+
+close(FHD);
+
+
+sub get_time {
+# 取得秒, 分, 時, 日, 月, 年 
+    my ($sec,$min,$hour,$day,$mon,$year)=localtime(time);
+													
+# 月比實際少一, 所以加 1
+    $mon++;
+# 判斷是否為個位數, 若是則在前面補 0
+    if (length ($mon) == 1) {$mon = '0'.$mon;}
+    if (length ($day) == 1) {$day = '0'.$day;}
+    if (length ($hour) == 1) {$hour = '0'.$hour;}
+    if (length ($min) == 1) {$min = '0'.$min;}
+    if (length ($sec) == 1) {$sec = '0'.$sec;}
+
+# 年比實際西元年少 1900, 所以加上 1900
+    $year+=1900;
+
+# 組合成完整的時間
+    my $alltime="$year/$mon/$day $hour:$min:$sec";
+}
+

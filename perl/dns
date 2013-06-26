@@ -1,0 +1,24 @@
+#! /usr/bin/perl
+
+use strict;
+use Socket;
+
+print <<HERE;
+請輸入您想查詢的完整主機網域名稱?
+HERE
+
+while ( chomp($_ = <STDIN>) ) {
+	if ($_ eq 'exit') {
+	    last; 
+	}
+
+	my $paddr = gethostbyname($_);
+	unless ($paddr) {
+	    print "$_ => ?\n";
+	    next;
+  }
+
+  my $daddr = inet_ntoa($paddr);
+  print "$_ => $daddr\n";
+}
+

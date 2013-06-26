@@ -1,0 +1,47 @@
+#! /usr/bin/perl
+
+if ( !($alert_min = $ARGV[0]) ) {
+    print "請輸入幾分報時 ";
+    $alert_min=<STDIN>;
+}
+
+#chomp($alert_min);
+#if ( length($alert_min) == 1 ) {$alert_min = '0'.$alert_min;}
+
+while ( $alert  == 0 ) {
+    ($sec,$min,$hour,$day,$mon,$year)=localtime(time);
+
+# 月比實際少一, 所以加 1
+    $mon++;
+
+# 判斷是否為個位數, 若是則在前面補 0
+    if (length ($mon) == 1) {$mon = '0'.$mon;}
+    if (length ($day) == 1) {$day = '0'.$day;}
+    if (length ($hour) == 1) {$hour = '0'.$hour;}
+    if (length ($min) == 1) {$min = '0'.$min;}
+    if (length ($sec) == 1) {$sec = '0'.$sec;}
+
+# 年比實際西元年少 1900, 所以加上 1900
+    $year+=1900;
+
+# 組合成完整的時間
+    $alltime="$year/$mon/$day $hour:$min:$sec";
+		print "\n***  now = $alltime  ***\n";
+    
+		$alert_sec = $alert_min * 60;
+		$now_sec = $min * 60 + $sec;
+#		print "now = $now_sec  alert = $alert_sec\n";
+    if ( $alert_sec > $now_sec ) {
+        $wait = ($alert_sec - $now_sec);
+		}
+		elsif ( $alert_sec == $now_sec ) {
+		    $wait = 60*60;
+		}
+		else {
+		    $wait = 60*60 - $now_sec + $alert_sec;
+		}
+
+		print "Next time alert should wait $wait sec.\n";
+		sleep $wait;
+}
+

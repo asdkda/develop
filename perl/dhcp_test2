@@ -1,0 +1,55 @@
+#!/usr/bin/perl
+# Simple DHCP client - sending a broadcasted DHCP Discover request
+
+use IO::Socket::INET;
+use Net::DHCP::Packet;
+use Net::DHCP::Constants;
+
+# creat DHCP Packet
+$discover = Net::DHCP::Packet->new(
+                        Chaddr => '001122334455',
+                        xid => int(rand(0xFFFFFFFF)), # random xid
+                        Flags => 0x8000,              # ask for broadcast answer
+                        DHO_DHCP_MESSAGE_TYPE() => DHCPDISCOVER()
+                        );
+
+# send packet
+$handle = IO::Socket::INET->new(Proto => 'udp',
+                                  Broadcast => 1,
+                                  PeerPort => '67',
+                                  LocalPort => '68',
+                                  PeerAddr => '255.255.255.255')
+                or die "socket: $@";     # yes, it uses $@ here
+$handle->send($discover->serialize())
+                or die "Error sending broadcast inform:$!\n";
+$handle->close();
+
+$sock = IO::Socket::INET->new(LocalAddr => '255.255.255.255', LocalPort => '68', Proto => "udp")
+          or die "socket: $@";
+
+while ($sock->recv($newmsg, 1024)) {
+		print "IN\n";
+        $packet = Net::DHCP::Packet->new($newmsg);
+        print $packet->toString();
+		last if 1;
+}
+$sock->close();
+
+$request = Net::DHCP::Packet->new(
+                        xid => discover.xid,
+                        Flags => 0x8000,              # ask for broadcast answer
+                        DHO_DHCP_MESSAGE_TYPE() => DHCPREQUEST(),
+                        Ciaddr => $packet->yiaddr(),
+                        DHO_DHCP_REQUESTED_ADDRESS() => $packet->yiaddr(),
+                        );
+
+$handle = IO::Socket::INET->new(Proto => 'udp',
+                                  Broadcast => 1,
+                                  PeerPort => '67',
+                                  LocalPort => '68',
+                                  PeerAddr => '255.255.255.255')
+                or die "socket: $@";     # yes, it uses $@ here
+$handle->send($request->serialize())
+                or die "Error sending broadcast inform:$!\n";
+
+print "out\n";

@@ -1,0 +1,42 @@
+#! /usr/bin/perl
+use strict;
+
+# 使用 IO::Socket 模組
+use IO::Socket;
+
+# 取得命令列中的網頁位址，放入 $url 中
+my $url=shift || die "您沒有輸入 url 網址!\n";
+
+# 比對網頁位址是否合乎格式？
+$url =~ s/"//;
+my ($http, $host, $file) = $url =~ m((http://)?([^/]+)+(/[^\#]*)?);
+$file = '/' if ( !$file );
+print $host,"\n", $file, "\n";
+
+# 若比對正確，才抓取
+if ($host) {
+	# 產生一個 IO::Socket::INET 物件
+	my $socket = IO::Socket::INET->new(
+		PeerAddr => $host,			# 指定主機位址
+		PeerPort => 'http(80)'		# 指定 port 號
+	);
+
+	# 針對 $socket 寫入，此動作形同對 $host 主機提出網頁檔 $file 的要求
+	print $socket "GET $file HTTP/1.0\n\n";
+
+	# 只要由 $socket 讀到一列資料，就處理之
+	my $html = 0;
+	while(my $line=<$socket>) {
+        $html = $line =~ m/HTML/ if ( !$html );
+
+        if ( $html ) {
+        # 把 CR (^M) 換掉
+		    $line =~ s/\r//g;
+		# 顯示該列內容 (註2)
+		    print $line;
+        }
+	}
+} else {
+    print "$url is not a valid url!\n";
+}
+
