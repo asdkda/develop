@@ -1,0 +1,19 @@
+#!/bin/sh
+#  tftp get 192.168.1.100:httpd_restart /tmp/httpd_restart && chmod u+x /tmp/httpd_restart
+
+if [ -f /var/run/httpd.pid ]; then
+	d=`cat /var/run/httpd.pid`;
+	echo "kill $d and wait 1 sec";
+	kill -15 $d;
+	sleep 1;
+else 
+	echo "not exist";
+fi
+
+rm -r /tmp/www;
+cp -R /www /tmp/www;
+eval "cd /tmp/www";
+echo "start httpd";
+eval "httpd";
+
+
