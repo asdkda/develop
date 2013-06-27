@@ -4,6 +4,7 @@
 
 TMP_FILE="/tmp/local_avg.tmp"
 TMP_CORP_FILE="/tmp/local_corp.tmp"
+LIST_FILE="~/config/stockList"
 
 show5ma=0
 
@@ -34,7 +35,7 @@ done
 
 if [ -z "$stock_list" ] ; then
 	# set default value
-	stock_list=`sed -n "1 p" /data/sourceCode/stockList`
+	stock_list=`sed -n "1 p" $LIST_FILE`
 	if [ $? -ne 0 ] ; then
 		exit
 	fi

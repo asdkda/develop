@@ -1,12 +1,13 @@
 #!/usr/bin/expect -f
-source [file dirname $argv0]/lib.tcl
+set TOP [exec dirname $argv0]
+source $TOP/lib.tcl
 
 set USER			[lindex $argv 0]
 set PASSWD			[lindex $argv 1]
 set TARGET_IP		[lindex $argv 2]
 set mod_name 		[lindex $argv 3]
 set cdl				[lindex $argv 4]
-set SELF_IP			[exec /data/sourceCode/shellScript/get_ip.sh]
+set SELF_IP			[exec $TOP/../shellScript/get_ip.sh]
 set folder 			""
 set so_name_path	""
 set so_name 		""

@@ -1,8 +1,9 @@
 #!/usr/bin/expect -f
-source [file dirname $argv0]/lib.tcl
+set TOP [exec dirname $argv0]
+source $TOP/lib.tcl
 
 set USER					admin
-set SELF_IP					[exec /data/sourceCode/shellScript/get_ip.sh]
+set SELF_IP					[exec $TOP/../shellScript/get_ip.sh]
 set TARGET_IP				[lindex $argv 0]
 set TYPE					[lindex $argv 1]
 set PROTOCOL				[lindex $argv 2]

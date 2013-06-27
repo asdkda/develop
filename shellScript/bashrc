@@ -1,0 +1,49 @@
+# .bashrc
+
+PS1='\[\033[0;36m\][\u@\h \w]\$ \[\033[0m\]'
+
+# User specific aliases and functions
+
+alias rm='rm -i'
+alias cp='cp -i'
+alias mv='mv -i'
+alias ggrep='grep -irnI --exclude-dir=".svn" --exclude-dir=".git" --exclude="*.cmd" ./ -e'
+alias cgrep='find . -name "*.[ch]" -o -name "*.cpp" -o -name "*.asp" -o -name "*.js" -o -name "*.css" -o -name "Makefile" -o -name "cy_configure" | xargs grep -inI ./ -e'
+alias lh='ls -lh --color=auto'
+alias svnex="svn pg svn:externals"
+alias gitci="git commit -a -m \"__Update from SVN.\""
+
+# dev
+_dev_path="/work/develop"
+alias q="sh $_dev_path/shellScript/stock.sh"
+alias stock="python $_dev_path/python/htmlparser/kStock_thread.py"
+alias check="python $_dev_path/python/htmlparser/check50List.py"
+alias tt="$_dev_path/shellScript/login.sh"
+alias ss="$_dev_path/shellScript/login.sh -s"
+alias list="$_dev_path/shellScript/common_login.sh"
+alias ss100="$_dev_path/shellScript/login.sh -s -i 10.2.10.100"
+alias con="$_dev_path/shellScript/login.sh -u console"
+alias upgrade="$_dev_path/shellScript/login.sh --upgrade -s"
+alias debug="$_dev_path/shellScript/login.sh -u root -d"
+alias setip="$_dev_path/tcl/setup_ip.tcl"
+alias initgit="$_dev_path/shellScript/initgit.sh"
+alias re-ssh="$_dev_path/shellScript/re-ssh.sh"
+alias getip="$_dev_path/shellScript/get_ip.sh"
+alias war3="wine /data/Game/WarcraftIII/war3.exe -opengl -windows"
+
+# tools
+alias mdns="/data/sourceCode/c/openSource/mDNS/mDNSResponder-333.10/mDNSPosix/build/prod/mDNSIdentify cisco00013.local"
+alias noip="/data/tool/noip-2.1.9-1/noip2 -c /data/tool/noip-2.1.9-1/no-ip2.conf"
+
+
+source $_dev_path/shellScript/bashDirB
+source /etc/bash_completion.d/git
+#source /usr/share/git-core/contrib/completion/git-prompt.sh for Fedora 18+
+#source /etc/bash_completion.d/git for RedHat/CentOS or Fedora 16-17
+
+# Source global definitions
+if [ -f /etc/bashrc ]; then
+	. /etc/bashrc
+fi
+
+# User specific aliases and functions

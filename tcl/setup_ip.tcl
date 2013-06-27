@@ -3,7 +3,7 @@ source [file dirname $argv0]/lib.tcl
 
 set timeout			5
 set USER				admin
-set CONSOLE_IP			10.2.10.60
+set CONSOLE_IP			10.2.10.21
 
 
 puts "What do you want to setup ?"
@@ -35,7 +35,7 @@ switch $choice {
 	}
 	4 {
 		set TARGET_IP		10.2.10.100
-		set CONSOLE_PORT	3001
+		set CONSOLE_PORT	3008
 		set INDEX			0
 
 	}

@@ -1,5 +1,8 @@
 #!/bin/bash
-TCL_SRC="/data/sourceCode/tcl"
+
+source ~/config/config.sh
+TOP=`dirname $0`
+TCL_SRC=`readlink -f $TOP/../tcl`
 
 useage() {
 	echo -e "Useage: ${0##*/} [-s] [-h]"
@@ -16,14 +19,14 @@ useage() {
 
 # set default value for each variable
 USER="admin"
-PASSWORD="admin"
+PASSWORD=$ADMIN_PW
 COS_PASSWORD=""
 IP="10.2.10.100"
 PROTO="telnet"
 TYPE="marconi"
 PORT=""
-DEFAULT_ROOT_PASSWD="xxxxxx"
-DEFAULT_ROOT_PASSWD2="xxxxxx"
+DEFAULT_ROOT_PASSWD=$LILEE_PW
+DEFAULT_ROOT_PASSWD2=$ROOT_PW
 
 UPGRADE=0
 DEBUG=0
@@ -102,6 +105,11 @@ if [ $USER = "root" -a $TYPE = "lmc" ]; then
 elif [ $USER = "rootd" ]; then
 	USER="root"
 	PASSWORD=$DEFAULT_ROOT_PASSWD2
+elif [ $USER = "console" ]; then
+	USER="root"
+	PASSWORD=$ROOT_PW2
+	IP=$CONSOLE_IP
+	PORT=$CONSOLE_PORT
 else
 	PASSWORD=$USER
 fi
@@ -125,7 +133,7 @@ if [ $? -ne 0 ]; then
 fi
 
 # gen ssh key
-/data/sourceCode/shellScript/re-ssh.sh $IP
+$TOP/re-ssh.sh $IP
 
 if [ $DEBUG = 1 ]; then
 	echo "$TCL_SRC/debug.tcl $USER $PASSWORD $IP $DEBUG_SO $DEBUG_CDL"
