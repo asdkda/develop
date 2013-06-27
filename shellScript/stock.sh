@@ -4,7 +4,7 @@
 
 TMP_FILE="/tmp/local_avg.tmp"
 TMP_CORP_FILE="/tmp/local_corp.tmp"
-LIST_FILE="~/config/stockList"
+LIST_FILE=`readlink -f ~/config/stockList`
 
 show5ma=0
 

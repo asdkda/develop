@@ -32,7 +32,7 @@ alias getip="$_dev_path/shellScript/get_ip.sh"
 alias war3="wine /data/Game/WarcraftIII/war3.exe -opengl -windows"
 
 # tools
-alias mdns="/data/sourceCode/c/openSource/mDNS/mDNSResponder-333.10/mDNSPosix/build/prod/mDNSIdentify cisco00013.local"
+alias mdns="/data/tool/mDNS/mDNSResponder-333.10/mDNSPosix/build/prod/mDNSIdentify cisco00013.local"
 alias noip="/data/tool/noip-2.1.9-1/noip2 -c /data/tool/noip-2.1.9-1/no-ip2.conf"
 
 
