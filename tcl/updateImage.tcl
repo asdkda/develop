@@ -59,7 +59,7 @@ if { "[string range $SELF_IP 0 [string last "." $SELF_IP]]" == "192.168.1." } {
 
 if { $TYPE == "marconi" } {
 	if { $PROTOCOL == "ssh" } {
-		login_device_lmc $USER
+		login_device_ssh $USER
 	} else {
 		login_device $USER $USER
 	}
@@ -70,15 +70,10 @@ if { $TYPE == "marconi" } {
 	config_command "update boot system-image http://$SELF_IP/tftp/$FULL_IMAGE_NAME"
 } elseif { $TYPE == "lmc" } {
 	if { $PROTOCOL == "ssh" } {
-		login_device_lmc $USER
+		login_device_ssh $USER
 	} else {
 		# if root already login, exit it!
-		expect {
-			" login:"			{send "$USER\r" ; exp_continue}
-			"Password:"			{send "$USER\r" ; exp_continue}
-			" >"				{}
-			"root@localhost"	{send "exit\r" ; interact}
-		}
+		logout_device $USER
 	}
 
 	set FULL_IMAGE_NAME			[file tail [glob -directory "/tftp" lmc5000_u*]]
@@ -92,7 +87,7 @@ if { $TYPE == "marconi" } {
 	expect " >"
 } elseif { $TYPE == "wms" } {
 	if { $PROTOCOL == "ssh" } {
-		login_device_lmc $USER
+		login_device_ssh $USER
 	} else {
 		login_device $USER $USER
 	}

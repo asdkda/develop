@@ -106,7 +106,7 @@ file copy -force $so_name_path /tftp
 
 # connect to TARGET device
 spawn ssh $USER@$TARGET_IP
-login_device_lmc $PASSWD
+login_device_ssh $PASSWD
 
 if {$cdl == 1} {
 #	file copy -force ../tools/cli_gen_tool/clish_xml/cli.xml /tftp

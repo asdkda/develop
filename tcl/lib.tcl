@@ -6,6 +6,8 @@ set RESET		"\033\[0m"
 set ERROR_LOG		"\n   ===== FAIL ====="
 set ERROR_FLAG    0
 
+# debug
+#puts "--------\n" ; puts "$expect_out(buffer)"; puts "-------\n"
 
 proc escape_console_server {} {
 	expect -re "Escape character is.*"
@@ -13,16 +15,30 @@ proc escape_console_server {} {
 }
 
 proc login_device {user passwd} {
+	set timeout		2
 	expect {
 		"Login incorrect"	{error_log $::ERROR_LOG ; exit}
-		" login:"			{send "$user\r" ; expect " login:" ; exp_continue}
+		" login:"			{
+			send "$user\r"
+			expect "Password:"			{send "$passwd\r"}
+			exp_continue
+		}
 		"Password:"			{send "$passwd\r" ; exp_continue}
 		" >"				{}
 		"# "				{}
 	}
 }
 
-proc login_device_lmc {passwd} {
+proc logout_device {user} {
+	expect {
+		" login:"			{send "$user\r" ; exp_continue}
+		"Password:"			{send "$user\r" ; exp_continue}
+		" >"				{}
+		"root@localhost"	{send "exit\r" ; interact}
+	}
+}
+
+proc login_device_ssh {passwd} {
 	expect {
 		"Permission denied"		{error_log $::ERROR_LOG ; exit}
 		" password:"			{send "$passwd\r" ; exp_continue}

@@ -32,7 +32,7 @@ switch $argc {
 }
 
 if { $PROTOCOL == "ssh" } {
-	login_device_lmc $PASSWD
+	login_device_ssh $PASSWD
 } else {
 	login_device $USER $PASSWD
 }
