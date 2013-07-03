@@ -26,6 +26,7 @@ proc login_device {user passwd} {
 		"Password:"			{send "$passwd\r" ; exp_continue}
 		" >"				{}
 		"# "				{}
+		"$ "				{}
 	}
 }
 
@@ -44,6 +45,7 @@ proc login_device_ssh {passwd} {
 		" password:"			{send "$passwd\r" ; exp_continue}
 		" >"					{}
 		"# "					{}
+		"$ "					{}
 	}
 }
 
