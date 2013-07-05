@@ -9,6 +9,10 @@ set ERROR_FLAG    0
 # debug
 #puts "--------\n" ; puts "$expect_out(buffer)"; puts "-------\n"
 
+#set fd [open /tmp/kkkk a+]
+#puts $fd $buf
+#close $fd
+
 proc escape_console_server {} {
 	expect -re "Escape character is.*"
 	send "\r"
@@ -126,23 +130,32 @@ proc config_fail_command {command} {
 }
 
 proc show_command {command} {
+	list set array {}
 	send "$command\r"
 	expect {
+		"\r"		{
+			set buf [string trim $expect_out(buffer)]
+			set lists [regexp -inline {^[ -~]+} $buf]
+			for {set i 0} {$i < [llength $lists]} {incr i} {
+				set line [string trim [lindex $lists $i]]
+				if {[string length $line] != 0} {
+					lappend array $line
+				}
+			}
+			exp_continue
+		}
 		" >"		{}
 		"# "		{}
 	}
-
-	set out "$expect_out(buffer)"
-	set array [split $out "\r"]
 	
 	return $array
 }
 
-proc check_route {array string} {
+proc check_output {array string} {
 	set found 0
-	for {set i 3} {$i < [llength $array]} {incr i} {
-		set buf [string trim [lindex $array $i] " \r\n"]
-		if {[string compare $buf $string] == 0} {
+	for {set i 0} {$i < [llength $array]} {incr i} {
+		set buf [lindex $array $i]
+		if {[string first $string $buf] == 0} {
 			incr found
 			break
 		} else {
@@ -156,10 +169,10 @@ proc check_route {array string} {
 	}
 }
 
-proc check_output {array string} {
+proc check_output_i {array index string} {
 	set found 0
-	for {set i 0} {$i < [llength $array]} {incr i} {
-		set buf [string trim [lindex $array $i] " \r\n"]
+	for {set i 0} {$index < [llength $array]} {incr i} {
+		set buf [lindex $array $i]
 		if {[string first $string $buf] == 0} {
 			incr found
 			break
