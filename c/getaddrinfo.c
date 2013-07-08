@@ -14,7 +14,6 @@ main(int argc, char *argv[])
 	struct addrinfo hints;
 	struct addrinfo *result, *rp;
 	int sfd, s;
-	struct sockaddr_in *aaa;
 	struct sockaddr_storage peer_addr;
 	socklen_t peer_addr_len;
 	ssize_t nread;
@@ -45,8 +44,6 @@ main(int argc, char *argv[])
                          Try each address until we successfully bind(2).
                          If socket(2) (or bind(2)) fails, we (close the socket
                          and) try the next address. */
-	aaa = (struct sockaddr_in *)result->ai_addr;
-
 	for (rp = result; rp != NULL; rp = rp->ai_next) {
 		sfd = socket(rp->ai_family, rp->ai_socktype,
 				rp->ai_protocol);
