@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <errno.h>
+#include <shadow.h>
 
 int
 main(int argc, char *argv[])
@@ -39,6 +40,21 @@ main(int argc, char *argv[])
 		exit(EXIT_FAILURE);
 	}
 
-	printf("Name: %s; UID: %ld\n", pwd.pw_gecos, (long) pwd.pw_uid);
+	printf("Name: %s; UID: %ld; ", pwd.pw_gecos, (long) pwd.pw_uid);
+
+	struct spwd spw;
+	struct spwd *resultsp = NULL;
+	s = getspnam_r(argv[1], &spw, buf, bufsize, &resultsp);
+	if (s || !resultsp)
+	{
+		perror("getspnam_r");
+		printf("PASSWD: aa\n");
+	}
+	else
+		printf("PASSWD: %s\n", resultsp->sp_pwdp);
+	
+	
+	free(buf);
+	
 	exit(EXIT_SUCCESS);
 }
