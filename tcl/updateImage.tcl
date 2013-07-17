@@ -7,7 +7,7 @@ set SELF_IP					[exec $TOP/../shellScript/get_ip.sh]
 set TARGET_IP				[lindex $argv 0]
 set TYPE					[lindex $argv 1]
 set PROTOCOL				[lindex $argv 2]
-set timeout					10
+set timeout					30
 set NEXT_BOOT_IMG			""
 set PUBLIC					10.2.10.204
 

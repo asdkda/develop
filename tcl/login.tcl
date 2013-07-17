@@ -1,7 +1,7 @@
 #!/usr/bin/expect -f
 source [file dirname $argv0]/lib.tcl
 
-set timeout		20
+set timeout		30
 
 set USER			[lindex $argv 0]
 set PASSWD			[lindex $argv 1]

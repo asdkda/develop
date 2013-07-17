@@ -126,11 +126,16 @@ if [ "x$IP" = "x" -o "x$PASSWORD" = "x" ]; then
 	exit 0
 fi
 
-ping -c 1 $IP > /dev/null
-if [ $? -ne 0 ]; then
-	echo "$IP can't be connected"
-	exit 0
-fi
+
+ping_ret=1
+while [ $ping_ret -eq 1 ]
+do
+	ping -c 1 $IP > /dev/null
+	ping_ret=$?
+	if [ $ping_ret -ne 0 ]; then
+		echo "$IP can't be connected"
+	fi
+done
 
 # gen ssh key
 $TOP/re-ssh.sh $IP
