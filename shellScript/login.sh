@@ -33,6 +33,9 @@ DEBUG=0
 DEBUG_SO=""
 DEBUG_CDL=0
 
+# trap interrupt first
+trap 'echo Interrupted; exit' INT
+
 # translate long options to short
 for arg
 do
