@@ -6,7 +6,7 @@ TCL_SRC=`readlink -f $TOP/../tcl`
 
 useage() {
 	echo -e "Useage: ${0##*/} [-s] [-h]"
-	echo -e "\t [-u name] [-p passwd] [--port port] [--upgrade] [-d soName --cdl] [--lmc] [--wms] -i ip"
+	echo -e "\t [-u name] [-p passwd] [--port port] [--upgrade] [--test] [-d soName --cdl] [--lmc] [--wms] -i ip"
 	echo -e ""
 	echo -e "  -s: ssh login"
 	echo -e "  -d: debug so"
@@ -32,6 +32,7 @@ UPGRADE=0
 DEBUG=0
 DEBUG_SO=""
 DEBUG_CDL=0
+TEST=0
 
 # trap interrupt first
 trap 'echo Interrupted; exit' INT
@@ -47,6 +48,7 @@ do
 		--upgrade) args="${args}-a ";;
 		--lmc) args="${args}-l ";;
 		--wms) args="${args}-w ";;
+		--test) TEST=1;;
 		# pass through anything else
 		*) [[ "${arg:0:1}" == "-" ]] || delim="\""
 			args="${args}${delim}${arg}${delim} ";;
@@ -149,6 +151,9 @@ if [ $DEBUG = 1 ]; then
 elif [ $UPGRADE = 1 ]; then
 	echo "$TCL_SRC/updateImage.tcl $IP $TYPE $PROTO $PORT"
 	eval $TCL_SRC/updateImage.tcl $IP $TYPE $PROTO $PORT
+elif [ $TEST = 1 ]; then
+	echo "$DEV_PATH/shellScript/caseTest.sh -i $IP -t $TYPE"
+	eval $DEV_PATH/shellScript/caseTest.sh -i $IP -t $TYPE
 else
 	echo "$TCL_SRC/login.tcl $USER $PASSWORD $IP $PROTO $PORT"
 	eval $TCL_SRC/login.tcl $USER $PASSWORD $IP $PROTO $PORT

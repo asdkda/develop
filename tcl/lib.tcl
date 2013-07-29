@@ -66,7 +66,7 @@ proc process_file {filename} {
 				  || [string range $data 0 1 ] == "no"} {
 			set cmd "config_command \"$data\""
 			eval $cmd
-		} elseif {[string range $data 0 3 ] == "show"} {
+		} elseif {[string range $data 0 4 ] == "show "} {
 			set cmd "show_command \"$data\""
 			eval $cmd
 		} elseif {[string index $data 0] == "X"} {
@@ -148,7 +148,9 @@ proc show_command {command} {
 		"# "		{}
 	}
 	
-	return $array
+	if {[info exists array]} {
+		return $array
+	}
 }
 
 proc check_output {array string} {
