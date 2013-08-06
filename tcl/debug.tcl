@@ -12,7 +12,7 @@ set folder 			""
 set so_name_path	""
 set so_name 		""
 set device_so_path	""
-set killDaemon		"killall -q udhcpc wpa_supplicant wvdial fcapsd fcaps_cmd mobilityd platformd daemon_monitor gpsd ; killall -9 fcapsd platformd"
+set killDaemon		"killall -q udhcpc wpa_supplicant imgupd_updater wvdial fcapsd fcaps_cmd mobilityd platformd daemon_monitor gpsd ; killall -9 fcapsd platformd"
 set restartDaemon	"sleep 5; /opt/lilee/sbin/daemon_monitor"
 
 # debug <target dir> <copy xml ?> <is wms ?>
