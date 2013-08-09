@@ -4,6 +4,7 @@ DIR="/work/private/test_case"
 USE_ZENITY=1
 tmp_file="/tmp/.dialog"
 
+source ./login.sh -a test $@
 
 useage() {
 	echo -e "Useage: ${0##*/} [-i IP] [-t device type] [-h]"
@@ -77,26 +78,6 @@ generate_zenity_file_menu()
 	fi
 }
 
-
-while getopts "i:t:h" OPTION
-do
-	case ${OPTION} in
-		i)
-			IP=${OPTARG}
-			;;
-		t)
-			TYPE=${OPTARG}
-			;;
-		h)
-			useage
-			exit 0
-			;;
-		?)
-			useage
-			exit 0
-			;;
-	esac
-done
 
 echo "What do you want to test ?" > $tmp_file
 i=1

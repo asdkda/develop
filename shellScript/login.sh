@@ -4,35 +4,46 @@ source ~/config/config.sh
 TOP=`dirname $0`
 TCL_SRC=`readlink -f $TOP/../tcl`
 
-useage() {
-	echo -e "Useage: ${0##*/} [-s] [-h]"
-	echo -e "\t [-u name] [-p passwd] [--port port] [--upgrade] [--test] [-d soName --cdl] [--lmc] [--wms] -i ip"
-	echo -e ""
-	echo -e "  -s: ssh login"
-	echo -e "  -d: debug so"
-	echo -e "  --cdl: debug with cdl"
-	echo -e "  -h: display this help message"
-	echo -e ""
-	echo -e "  Use admin:admin telnet login remote device(10.2.10.85) by default."
-	echo -e ""
-}
-
 # set default value for each variable
 USER="admin"
 PASSWORD=$ADMIN_PW
 COS_PASSWORD=""
 IP="10.2.10.100"
-PROTO="telnet"
+PROTO="ssh"
 TYPE="marconi"
 PORT=""
+ACTION=""
 DEFAULT_ROOT_PASSWD=$LILEE_PW
 DEFAULT_ROOT_PASSWD2=$ROOT_PW
 
-UPGRADE=0
-DEBUG=0
 DEBUG_SO=""
 DEBUG_CDL=0
-TEST=0
+
+useage() {
+	echo -e "Useage: ${0##*/} [-s] [-u name] [-p passwd] [--port port] [-i ip] [-I ip] [-a action]"
+	echo -e "        ${0##*/} -h"
+	echo -e ""
+	echo -e "Options:"
+	echo -e "  -s: telnet login"
+	echo -e "  -u: user name, default: $USER, predefined: rootd, console"
+	echo -e "  -p: user password, default: $PASSWORD"
+	echo -e "  -i: device IP, default: $IP"
+	echo -e "  -I: device IP 10.2.10.x"
+	echo -e "  -h: display this help message"
+	echo -e ""
+	echo -e "action:"
+	echo -e "  upgrade"
+	echo -e "    -t: device type, default: $TYPE"
+	echo -e "  debug"
+	echo -e "    -d: debug so"
+	echo -e "    --cdl: debug with cdl"
+	echo -e "  test"
+#	echo -e ""
+#	echo -e "  Use admin:admin telnet login remote device(10.2.10.100) by default."
+	echo -e ""
+}
+
+
 
 # trap interrupt first
 trap 'echo Interrupted; exit' INT
@@ -42,13 +53,13 @@ for arg
 do
 	delim=""
 	case "$arg" in
-		--cdl) args="${args}-c ";;
+		--cdl) DEBUG_CDL=1 ;;
 		--help) args="${args}-h ";;
-		--port) args="${args}-t ";;
-		--upgrade) args="${args}-a ";;
-		--lmc) args="${args}-l ";;
-		--wms) args="${args}-w ";;
-		--test) TEST=1;;
+		--port) PORT=${OPTARG} ;;
+#		--upgrade) args="${args}-a ";;
+#		--lmc) args="${args}-l ";;
+#		--wms) args="${args}-w ";;
+#		--test) TEST=1 ;;
 		# pass through anything else
 		*) [[ "${arg:0:1}" == "-" ]] || delim="\""
 			args="${args}${delim}${arg}${delim} ";;
@@ -57,27 +68,14 @@ done
 # reset the translated args
 eval set -- $args
 # now we can process with getopt
-while getopts "ashlwu:p:t:i:I:d:c" OPTION
+while getopts "a:d:i:I:p:st:u:h" OPTION
 do
 	case ${OPTION} in
-		c)
-			DEBUG_CDL=1
+		a)
+			ACTION=${OPTARG}
 			;;
 		d)
-			DEBUG=1
 			DEBUG_SO=${OPTARG}
-			;;
-		s)
-			PROTO="ssh"
-			;;
-		u)
-			USER=${OPTARG}
-			;;
-		p)
-			COS_PASSWORD=${OPTARG}
-			;;
-		t)
-			PORT=${OPTARG}
 			;;
 		i)
 			IP=${OPTARG}
@@ -85,14 +83,17 @@ do
 		I)
 			IP=10.2.10.${OPTARG}
 			;;
-		a)
-			UPGRADE=1
+		p)
+			COS_PASSWORD=${OPTARG}
 			;;
-		l)
-			TYPE="lmc"
+		s)
+			PROTO="telnet"
 			;;
-		w)
-			TYPE="wms"
+		t)
+			TYPE=${OPTARG}
+			;;
+		u)
+			USER=${OPTARG}
 			;;
 		h)
 			useage
@@ -145,17 +146,18 @@ done
 # gen ssh key
 $TOP/re-ssh.sh $IP
 
-if [ $DEBUG = 1 ]; then
-	echo "$TCL_SRC/debug.tcl $USER $PASSWORD $IP $DEBUG_SO $DEBUG_CDL"
-	eval $TCL_SRC/debug.tcl $USER $PASSWORD $IP $DEBUG_SO $DEBUG_CDL
-elif [ $UPGRADE = 1 ]; then
-	echo "$TCL_SRC/updateImage.tcl $IP $TYPE $PROTO $PORT"
-	eval $TCL_SRC/updateImage.tcl $IP $TYPE $PROTO $PORT
-elif [ $TEST = 1 ]; then
-	echo "$DEV_PATH/shellScript/caseTest.sh -i $IP -t $TYPE"
-	eval $DEV_PATH/shellScript/caseTest.sh -i $IP -t $TYPE
+#echo "$PROTO $USER:$PASSWORD@$IP"
+if [ -n "$ACTION" ]; then
+	if [ $ACTION = "upgrade" ]; then
+		echo "$TCL_SRC/updateImage.tcl $IP $TYPE $PROTO $PORT"
+		eval $TCL_SRC/updateImage.tcl $IP $TYPE $PROTO $PORT
+	elif [ $ACTION = "debug" ]; then
+		echo "$TCL_SRC/debug.tcl $USER $PASSWORD $IP $DEBUG_SO $DEBUG_CDL"
+		eval $TCL_SRC/debug.tcl $USER $PASSWORD $IP $DEBUG_SO $DEBUG_CDL
+	#elif [ $ACTION = "test" ]; then
+	#	echo ""
+	fi
 else
-	echo "$TCL_SRC/login.tcl $USER $PASSWORD $IP $PROTO $PORT"
 	eval $TCL_SRC/login.tcl $USER $PASSWORD $IP $PROTO $PORT
 fi
 
