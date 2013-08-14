@@ -19,9 +19,9 @@ DEFAULT_ROOT_PASSWD2=$ROOT_PW
 DEBUG_SO=""
 DEBUG_CDL=0
 
-useage() {
-	echo -e "Useage: ${0##*/} [-s] [-u name] [-p passwd] [--port port] [-i ip] [-I ip] [-a action]"
-	echo -e "        ${0##*/} -h"
+usage() {
+	echo -e "Usage: ${0##*/} [-s] [-u name] [-p passwd] [--port port] [-i ip] [-I ip] [-a action]"
+	echo -e "       ${0##*/} -h"
 	echo -e ""
 	echo -e "Options:"
 	echo -e "  -s: telnet login"
@@ -96,11 +96,11 @@ do
 			USER=${OPTARG}
 			;;
 		h)
-			useage
+			usage
 			exit 0
 			;;
 		?)
-			useage
+			usage
 			exit 0
 			;;
 	esac
@@ -128,7 +128,7 @@ shift $((OPTIND-1))
 
 if [ "x$IP" = "x" -o "x$PASSWORD" = "x" ]; then
 	echo "IP [$IP] password [$PASSWORD]"
-	useage
+	usage
 	exit 0
 fi
 

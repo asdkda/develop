@@ -10,7 +10,7 @@ List=("marconi   10.2.10.100" "$path/login.sh -I 100"
       "lmc       10.2.10.71"  "$path/login.sh -I 71"
       "root      10.2.10.20"  "$path/login.sh -I 20 -u root -p $LILEE_PW"
 #      "root      10.2.10.51"  "$path/login.sh -s -i 10.2.10.51 -u root -p $LILEE_PW3"
-      "builder   10.1.10.20"  "$path/login.sh -I 20 -u builder -p $LILEE_PW4"
+      "builder   10.1.10.20"  "$path/login.sh -i 10.1.10.20 -u builder -p $LILEE_PW4"
       "builder64 10.1.10.21"  "$path/login.sh -i 10.1.10.21 -u root -p $LILEE_PW2"
       "ethan"                 "$path/login.sh -i ethan-yang.no-ip.org -u $CUSTOM_PW")
 
