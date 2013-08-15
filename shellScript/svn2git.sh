@@ -8,9 +8,6 @@ LIST=""
 DEST=""
 cmd=""
 
-url_list=()
-
-
 usage() {
 	echo -e "Usage: ${0##*/} -l list -d dest"
 	echo -e "       ${0##*/} -h"
