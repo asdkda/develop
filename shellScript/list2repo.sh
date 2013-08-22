@@ -58,14 +58,14 @@ fi
 cat $LIST > /tmp/external
 while read line; do
 	git=`echo $line|cut -d ' ' -f 1`
-	path=`echo $line|cut -d ' ' -f 2|sed -s "s|/work/ptc-3000/||"`
+	path=`echo $line|cut -d ' ' -f 2|sed -s "s|/work/ptc-3000/||"|sed -s "s|/work/wms-2000/||"`
 	
 	name=`echo $git|sed "s|http://humvee/svn/||"|sed "s|trunks/||"|sed "s|trunk/||"`
 	name=`echo $name|sed "s|sys_sw/||"|sed "s|plat_sw|platform|"`
 	name=`echo $name|sed "s|open_src|3rd-party|"`
 	name=`echo $name|sed "s|license_mgmt/||"`
 	
-	printf "\t<project name=\"%s\" path=\"%s\"/>\n" $name $path
+	printf "\t<project name=\"%s\" path=\"source/%s\"/>\n" $name $path
 
 done < /tmp/external
 
