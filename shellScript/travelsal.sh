@@ -1,5 +1,5 @@
 #!/bin/bash
-
+# Travelsal source code and list all svn externals url
 
 TOP=`dirname $0`
 

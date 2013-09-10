@@ -1,10 +1,12 @@
 #!/bin/sh
 
 DIR="/work/private/test_case"
+source ~/config/config.sh
+
 USE_ZENITY=1
 tmp_file="/tmp/.dialog"
 
-source ./login.sh -a test $@
+source $DEV_PATH/shellScript/login.sh -a test $@
 
 useage() {
 	echo -e "Useage: ${0##*/} [-i IP] [-t device type] [-h]"

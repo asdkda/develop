@@ -1,5 +1,5 @@
 #!/bin/bash
-
+# Convert from svn url list to repo project list
 
 TOP=`dirname $0`
 

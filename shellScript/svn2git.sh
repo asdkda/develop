@@ -1,5 +1,5 @@
 #!/bin/bash
-
+# Convert SVN repositories in list to git repositories.
 
 TOP=`dirname $0`
 

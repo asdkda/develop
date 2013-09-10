@@ -15,6 +15,10 @@ printf "%25s: %s\n" "\${parameter:2:5}" ${parameter:2:5}
 printf "%25s: %s\n" "\${parameter%lue}" ${parameter%lue}
 printf "%25s: %s\n" "\${parameter/test/kkk}" ${parameter/test/kkk}
 
+#${parameter//substring/replacement}
+#${parameter##remove_matching_prefix}
+#${parameter%%remove_matching_suffix}
+
 echo "for i in /etc/rc4.d/K*"
 echo -n "  \${i#/etc/rc4.d/K??}: "
 for i in /etc/rc4.d/K* ; do
