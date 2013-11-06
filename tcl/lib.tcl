@@ -93,6 +93,7 @@ proc config_command {command} {
 		"# "											{}
 		"Checking TFTP server"							{}
 		"Proceed anyway? (yes/no)"						{send "yes\r" ; exp_continue}
+		"Proceed with disk update? (yes/no)"			{send "yes\r" ; exp_continue}
 	}
 }
 

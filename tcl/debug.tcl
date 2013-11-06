@@ -12,7 +12,7 @@ set folder 			""
 set so_name_path	""
 set so_name 		""
 set device_so_path	""
-set killDaemon		"killall -q ipsec udhcpc wpa_supplicant imgupd_updater wvdial fcapsd fcaps_cmd mobilityd platformd daemon_monitor gpsd ; killall -9 fcapsd platformd"
+set killDaemon		"killall -q ipsec udhcpc wpa_supplicant imgupd_updater wvdial fcapsd fcaps_cmd mobilityd platformd daemon_monitor gpsd ; killall -9 fcapsd recorder platformd"
 set restartDaemon	"sleep 5; /opt/lilee/sbin/daemon_monitor"
 
 # debug <target dir> <copy xml ?> <is wms ?>
@@ -44,7 +44,7 @@ if { [catch {set so_name_path [glob -directory $folder *.so]} msg] } {
 }
 
 # check evnsetup.sh
-set env_path "../lilee_envsetup.sh"
+set env_path "../envsetup.sh"
 if { [file isfile $env_path] == 0 } {
 	set env_path "../build/envsetup.sh"
 	if { [file isfile $env_path] == 0 } {

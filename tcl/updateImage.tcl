@@ -57,46 +57,22 @@ if { "[string range $SELF_IP 0 [string last "." $SELF_IP]]" == "192.168.1." } {
 	set SELF_IP		$PUBLIC
 }
 
-if { $TYPE == "marconi" } {
-	if { $PROTOCOL == "ssh" } {
-		login_device_ssh $USER
-	} else {
-		login_device $USER $USER
-	}
-	
+login_device_ssh $USER
+
+if { $TYPE == "ptc" } {
 	set FULL_IMAGE_NAME			[file tail [glob -directory "/tftp" ptc3000_u*]]
-	set timeout 600
-
-	config_command "update boot system-image http://$SELF_IP/tftp/$FULL_IMAGE_NAME"
+	set timeout 300
 } elseif { $TYPE == "lmc" } {
-	if { $PROTOCOL == "ssh" } {
-		login_device_ssh $USER
-	} else {
-		# if root already login, exit it!
-		logout_device $USER
-	}
-
 	set FULL_IMAGE_NAME			[file tail [glob -directory "/tftp" lmc5000_u*]]
-
-	config_command "update boot system-image http://$SELF_IP/tftp/$FULL_IMAGE_NAME"
-
-	expect "Proceed with disk update? (yes/no)"
-	send "yes\r"
-
-	set timeout			600
-	expect " >"
+	set timeout 600
 } elseif { $TYPE == "wms" } {
-	if { $PROTOCOL == "ssh" } {
-		login_device_ssh $USER
-	} else {
-		login_device $USER $USER
-	}
-
 	set FULL_IMAGE_NAME			[file tail [glob -directory "/tftp" wms2000_u*]]
 	set timeout 300
-	
-	config_command "update boot system-image http://$SELF_IP/tftp/$FULL_IMAGE_NAME"
+} elseif { $TYPE == "dts" } {
+	set FULL_IMAGE_NAME			[file tail [glob -directory "/tftp" dts2000_u*]]
+	set timeout 600
 }
+config_command "update boot system-image http://$SELF_IP/tftp/$FULL_IMAGE_NAME"
 
 after 1000
 config_try_command "update terminal paging disable"
