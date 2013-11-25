@@ -15,6 +15,7 @@ PORT=""
 ACTION=""
 DEFAULT_ROOT_PASSWD=$LILEE_PW
 DEFAULT_ROOT_PASSWD2=$ROOT_PW
+ECHO=""
 
 DEBUG_SO=""
 DEBUG_CDL=0
@@ -34,6 +35,7 @@ usage() {
 	echo -e "action:"
 	echo -e "  upgrade"
 	echo -e "    -t: device type, default: $TYPE"
+	echo -e "    -c: echo command"
 	echo -e "  debug"
 	echo -e "    -d: debug so"
 	echo -e "    --cdl: debug with cdl"
@@ -68,11 +70,14 @@ done
 # reset the translated args
 eval set -- $args
 # now we can process with getopt
-while getopts "a:d:i:I:p:st:u:h" OPTION
+while getopts "a:cd:i:I:p:st:u:h" OPTION
 do
 	case ${OPTION} in
 		a)
 			ACTION=${OPTARG}
+			;;
+		c)
+			ECHO=yes
 			;;
 		d)
 			DEBUG_SO=${OPTARG}
@@ -149,8 +154,8 @@ $TOP/re-ssh.sh $IP
 #echo "$PROTO $USER:$PASSWORD@$IP"
 if [ -n "$ACTION" ]; then
 	if [ $ACTION = "upgrade" ]; then
-		echo "$TCL_SRC/updateImage.tcl $IP $TYPE $PROTO $PORT"
-		eval $TCL_SRC/updateImage.tcl $IP $TYPE $PROTO $PORT
+		echo "$TCL_SRC/updateImage.tcl $IP $TYPE $PROTO $PORT $ECHO"
+		eval $TCL_SRC/updateImage.tcl $IP $TYPE $PROTO $PORT $ECHO
 	elif [ $ACTION = "debug" ]; then
 		echo "$TCL_SRC/debug.tcl $USER $PASSWORD $IP $DEBUG_SO $DEBUG_CDL"
 		eval $TCL_SRC/debug.tcl $USER $PASSWORD $IP $DEBUG_SO $DEBUG_CDL

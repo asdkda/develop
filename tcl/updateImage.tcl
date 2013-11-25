@@ -7,9 +7,11 @@ set SELF_IP					[exec $TOP/../shellScript/get_ip.sh]
 set TARGET_IP				[lindex $argv 0]
 set TYPE					[lindex $argv 1]
 set PROTOCOL				[lindex $argv 2]
+set ECHOCMD					[lindex $argv 3]
 set timeout					30
 set NEXT_BOOT_IMG			""
 set PUBLIC					10.2.10.204
+set FULL_IMAGE_NAME			[file tail [glob -directory "/tftp" ${TYPE}*_u*.img]]
 
 
 proc get_img_name {array} {
@@ -27,6 +29,11 @@ proc get_img_name {array} {
 		incr ::ERROR_FLAG
 	}
 	return ""
+}
+
+if { $ECHOCMD != "" } {
+	puts "update boot system-image http://$SELF_IP/tftp/$FULL_IMAGE_NAME"
+	exit
 }
 
 switch $argc {
@@ -58,19 +65,10 @@ if { "[string range $SELF_IP 0 [string last "." $SELF_IP]]" == "192.168.1." } {
 }
 
 login_device_ssh $USER
-
-if { $TYPE == "ptc" } {
-	set FULL_IMAGE_NAME			[file tail [glob -directory "/tftp" ptc3000_u*]]
-	set timeout 300
-} elseif { $TYPE == "lmc" } {
-	set FULL_IMAGE_NAME			[file tail [glob -directory "/tftp" lmc5000_u*]]
+if { $TYPE == "lmc" || $TYPE == "dts" } {
 	set timeout 600
-} elseif { $TYPE == "wms" } {
-	set FULL_IMAGE_NAME			[file tail [glob -directory "/tftp" wms2000_u*]]
+} else {
 	set timeout 300
-} elseif { $TYPE == "dts" } {
-	set FULL_IMAGE_NAME			[file tail [glob -directory "/tftp" dts2000_u*]]
-	set timeout 600
 }
 config_command "update boot system-image http://$SELF_IP/tftp/$FULL_IMAGE_NAME"
 

@@ -7,7 +7,7 @@ PS1='\[\033[0;36m\][\u@\h \w]\$ \[\033[0m\]'
 alias rm='rm -i'
 alias cp='cp -i'
 alias mv='mv -i'
-alias ggrep='grep -irnI --exclude-dir=".svn" --exclude-dir=".git" --exclude-dir=".git" --exclude="*.cmd" ./ -e'
+alias ggrep='grep -irnI --exclude-dir=".svn" --exclude-dir=".git" --exclude="*.cmd" ./ -e'
 alias cgrep='find . -name "*.[ch]" -o -name "*.cpp" -o -name "*.asp" -o -name "*.js" -o -name "*.css" -o -name "Makefile" -o -name "cy_configure" | xargs grep -inI ./ -e'
 alias lh='ls -lh --color=auto'
 alias svnex="svn pg svn:externals"
