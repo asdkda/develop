@@ -27,7 +27,7 @@
 
 #define ETHER_TYPE 0x0800
 
-#define DEFAULT_IF "eth0"
+#define DEFAULT_IF "p3p1"
 #define BUF_SIZ 1024
 
 int main(int argc, char *argv[])

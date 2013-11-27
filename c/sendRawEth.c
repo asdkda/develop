@@ -22,7 +22,7 @@
 #define MY_DEST_MAC4 0x00
 #define MY_DEST_MAC5 0x00
 
-#define DEFAULT_IF "eth0"
+#define DEFAULT_IF "p3p1"
 #define BUF_SIZ 1024
 
 int main(int argc, char *argv[])
