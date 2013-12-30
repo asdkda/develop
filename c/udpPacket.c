@@ -84,16 +84,16 @@ static int get_stdin_input(char *buf, int len)
 	return n;
 }
 
-//static int bind_device(int sock)
-//{
-//	/* Bind the socket to one network device */
-//	if (setsockopt(sock, SOL_SOCKET, SO_BINDTODEVICE, DEFAULT_IF, sizeof(DEFAULT_IF)) < 0) {
-//		perror("setsockopt");
-//		return -1;
-//	}
-//
-//	return 0;
-//}
+static int bind_device(int sock)
+{
+	/* Bind the socket to one network device */
+	if (setsockopt(sock, SOL_SOCKET, SO_BINDTODEVICE, DEFAULT_IF, sizeof(DEFAULT_IF)) < 0) {
+		perror("setsockopt");
+		return -1;
+	}
+
+	return 0;
+}
 
 // Encapsulation data with ethernet header
 static int udpEthIPSendto(struct sockaddr_in *to)
@@ -230,6 +230,12 @@ static int udpIPSendto(struct sockaddr_in *to)
 		return EXIT_FAILURE;
 	}
 
+	if (bind_device(sock) < 0)
+	{
+		close(sock);
+		return EXIT_FAILURE;
+	}
+
 	/* Init iphdr */
 	ip->ihl = 5;
 	ip->version = 4;
@@ -275,7 +281,7 @@ static int udpIPSendto(struct sockaddr_in *to)
 	return 0;
 }
 
-static void udpSendto(struct sockaddr_in *to)
+static int udpSendto(struct sockaddr_in *to)
 {
 	int sock, len;
 	char buffer[BUFSIZE];
@@ -284,7 +290,13 @@ static void udpSendto(struct sockaddr_in *to)
 
 	if((sock = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
 		perror("socket");
-		return;
+		return EXIT_FAILURE;
+	}
+
+	if (bind_device(sock) < 0)
+	{
+		close(sock);
+		return EXIT_FAILURE;
 	}
 
 	while (1) {
@@ -299,6 +311,8 @@ static void udpSendto(struct sockaddr_in *to)
 	}
 
 	close(sock);
+
+	return 0;
 }
 
 int main(int argc, char *argv[])

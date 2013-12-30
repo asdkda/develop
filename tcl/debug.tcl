@@ -81,7 +81,7 @@ if { $mod_name == "fcapsd" } {
 
 # cdl
 if {$cdl == 1} {
-	exec sh -c "make cdl && rm -rf tmp.*"
+	exec sh -c "make cdl > /dev/null 2>&1 && rm -rf tmp.*"
 	exec sh -c "cd cdl_output && tar -cvf cdl.tar ./*"
 }
 
@@ -115,7 +115,7 @@ if {$cdl == 1} {
 	config_command "rm -rf /opt/lilee/etc/clish/* ; curl -O http://$SELF_IP/tftp/cdl.tar ; tar xf cdl.tar -C /opt/lilee/etc/clish"
 	
 	# gen cdl iface.xml
-	config_command "ln -s /tmp/iface.xml /opt/lilee/etc/clish/"
+	#config_command "ln -s /tmp/iface.xml /opt/lilee/etc/clish/"
 }
 
 if {[string range $so_name 0 5 ] != "lilee_" } {
