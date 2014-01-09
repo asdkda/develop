@@ -264,9 +264,9 @@ static int udpIPSendto(struct sockaddr_in *to)
 		ip->tot_len = sizeof(struct iphdr) + sizeof(struct udphdr) + len;
 		ip->check = 0;
 		ip->check = in_cksum(NULL, (uint16_t *)ip, sizeof(struct iphdr));
-		udp->check = 0;
 		udp->len = htons(sizeof(struct udphdr) + len);
 		pshd.length = udp->len;
+		udp->check = 0;
 		udp->check = in_cksum(&pshd, (uint16_t *)udp, sizeof(struct udphdr) + len);
 
 		if(sendto(sock, buffer, ip->tot_len, 0, (struct sockaddr *)to, sizeof(struct sockaddr_in)) < 0) {
