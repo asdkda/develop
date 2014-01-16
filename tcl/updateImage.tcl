@@ -11,7 +11,8 @@ set ECHOCMD					[lindex $argv 3]
 set timeout					30
 set NEXT_BOOT_IMG			""
 set PUBLIC					10.2.10.204
-set FULL_IMAGE_NAME			[file tail [glob -directory "/tftp" ${TYPE}*_u*.img]]
+set TFTPBOOT				"tftpboot"
+set FULL_IMAGE_NAME			[file tail [glob -directory "/${TFTPBOOT}" ${TYPE}*_u*.img]]
 
 
 proc get_img_name {array} {
@@ -32,7 +33,7 @@ proc get_img_name {array} {
 }
 
 if { $ECHOCMD != "" } {
-	puts "update boot system-image http://$SELF_IP/tftp/$FULL_IMAGE_NAME"
+	puts "update boot system-image http://$SELF_IP/${TFTPBOOT}/$FULL_IMAGE_NAME"
 	exit
 }
 
@@ -70,7 +71,7 @@ if { $TYPE == "lmc" || $TYPE == "dts" } {
 } else {
 	set timeout 300
 }
-config_command "update boot system-image http://$SELF_IP/tftp/$FULL_IMAGE_NAME"
+config_command "update boot system-image http://$SELF_IP/${TFTPBOOT}/$FULL_IMAGE_NAME"
 
 after 1000
 config_try_command "update terminal paging disable"

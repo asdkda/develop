@@ -8,6 +8,7 @@ set TARGET_IP		[lindex $argv 2]
 set mod_name 		[lindex $argv 3]
 set cdl				[lindex $argv 4]
 set SELF_IP			[exec $TOP/../shellScript/get_ip.sh]
+set TFTPBOOT		"tftpboot"
 set folder 			""
 set so_name_path	""
 set so_name 		""
@@ -68,7 +69,7 @@ if { $mod_name == "fcapsd" } {
 		puts $msg
 		puts "\n"
 	}
-	file copy -force $folder/fcapsd /tftp
+	file copy -force $folder/fcapsd /${TFTPBOOT}
 }
 
 
@@ -102,7 +103,7 @@ if { [catch {set so_name_path [glob -directory $folder *.so]} msg] } {
 
 set so_name [file tail $so_name_path]
 set device_so_path "/opt/lilee/lib/fcaps/$so_name"
-file copy -force $so_name_path /tftp
+file copy -force $so_name_path /${TFTPBOOT}
 
 # connect to TARGET device
 spawn ssh $USER@$TARGET_IP
@@ -111,8 +112,8 @@ login_device_ssh $PASSWD
 if {$cdl == 1} {
 #	file copy -force ../tools/cli_gen_tool/clish_xml/cli.xml /tftp
 #	config_command "tftp -g -r cli.xml $SELF_IP -l /etc/clish/cli.xml"
-	file copy -force cdl_output/cdl.tar /tftp
-	config_command "rm -rf /opt/lilee/etc/clish/* ; curl -O http://$SELF_IP/tftp/cdl.tar ; tar xf cdl.tar -C /opt/lilee/etc/clish"
+	file copy -force cdl_output/cdl.tar /${TFTPBOOT}
+	config_command "rm -rf /opt/lilee/etc/clish/* ; curl -O http://$SELF_IP/${TFTPBOOT}/cdl.tar ; tar xf cdl.tar -C /opt/lilee/etc/clish"
 	
 	# gen cdl iface.xml
 	#config_command "ln -s /tmp/iface.xml /opt/lilee/etc/clish/"
@@ -124,9 +125,9 @@ if {[string range $so_name 0 5 ] != "lilee_" } {
 
 config_command "$killDaemon"
 if { $mod_name == "fcapsd" } {
-	config_command "curl http://$SELF_IP/tftp/fcapsd -o /opt/lilee/bin/fcapsd"
+	config_command "curl http://$SELF_IP/${TFTPBOOT}/fcapsd -o /opt/lilee/bin/fcapsd"
 }
-config_command "curl http://$SELF_IP/tftp/$so_name -o $device_so_path ; $restartDaemon"
+config_command "curl http://$SELF_IP/${TFTPBOOT}/$so_name -o $device_so_path ; $restartDaemon"
 
 puts "\n"
 

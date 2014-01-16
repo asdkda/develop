@@ -17,10 +17,28 @@ List=("marconi   10.2.10.100" "$path/login.sh -I 100"
       "root      gamera"      "$path/login.sh -i gamera -u root"
       "ethan"                 "$path/login.sh -i ethan-yang.no-ip.org -u $CUSTOM_PW")
 
+display() {
+	echo -e "     ===== LIST ====="
+	for ((i=0, j=1; i<${#List[@]}; i++, i++, j++)); do
+		printf "%2d. %s\n      %s\n" $j "${List[$i]}" "${List[(($i+1))]}"
+	done
+	echo -e ""
+}
 
-echo -e "===== LIST ====="
+while getopts "s" OPTION
+do
+	case ${OPTION} in
+		s)
+			display
+			exit 0
+			;;
+	esac
+done
+
+
+echo -e "     ===== LIST ====="
 for ((i=0, j=1; i<${#List[@]}; i++, i++, j++)); do
-	echo "$j. ${List[$i]}"
+	printf "%2d. %s\n" $j "${List[$i]}"
 done
 echo -e ""
 
