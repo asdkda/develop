@@ -46,6 +46,7 @@ generate_zenity_menu()
 
 	sh $tmp_file
 	ans=`cat /tmp/.select`
+	ans=${ans:0:1}
 	if [ -z $ans ]; then
 		echo "Please input correct option!"
 		exit
@@ -74,6 +75,7 @@ generate_zenity_file_menu()
 
 	sh $tmp_file
 	ans=`cat /tmp/.select`
+	ans=${ans:0:1}
 	if [ -z $ans ]; then
 		echo "Please input correct option!"
 		exit
@@ -109,11 +111,13 @@ fi
 echo "What case do you want to test ?" > $tmp_file
 i=1
 FILE=()
+FILEDESC=()
 for file in `ls $DIR/${ARRAY[$(($ans-1))]}/`
 do
 	echo $i. $file >> $tmp_file
 	i=$(($i+1))
 	FILE+=("${ARRAY[$(($ans-1))]}/$file")
+	FILEDESC+=("`sed '3!d' $file | cut -d ' ' -f 2-`")
 done
 echo $i. all >> $tmp_file
 #echo "${FILE[@]}"

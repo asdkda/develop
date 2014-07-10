@@ -127,6 +127,8 @@ config_command "$killDaemon"
 if { $mod_name == "fcapsd" } {
 	config_command "curl http://$SELF_IP/${TFTPBOOT}/fcapsd -o /opt/lilee/bin/fcapsd"
 }
+# init env
+config_command "ulimit -c unlimited; ulimit -s 1024; export UV_THREADPOOL_SIZE=2"
 config_command "curl http://$SELF_IP/${TFTPBOOT}/$so_name -o $device_so_path ; $restartDaemon"
 
 puts "\n"

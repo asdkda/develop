@@ -86,6 +86,7 @@ proc config_command {command} {
 		"The system is going down for reboot NOW!"		{}
 		"Command format is error"						{error_log $::ERROR_LOG ; exit}
 		"Command failed"								{error_log $::ERROR_LOG ; exit}
+		"Failed"										{error_log $::ERROR_LOG ; exit}
 		"Error"											{error_log $::ERROR_LOG ; exit}
 		"lilee: \[ FAILED \]"							{error_log $::ERROR_LOG ; after 1000 ; exit}
 		"The system is not ready"						{error_log $::ERROR_LOG ; exit}

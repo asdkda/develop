@@ -19,6 +19,7 @@ alias check="python $_dev_path/python/htmlparser/check50List.py"
 alias initgit="$_dev_path/shellScript/initgit.sh"
 alias re-ssh="$_dev_path/shellScript/re-ssh.sh"
 alias getip="$_dev_path/shellScript/get_ip.sh"
+alias geturl="$_dev_path/shellScript/get_curl_url.sh"
 
 # work
 alias list="$_dev_path/shellScript/common_login.sh"
@@ -26,11 +27,15 @@ alias list-s="$_dev_path/shellScript/common_login.sh -s"
 alias tt="$_dev_path/shellScript/login.sh -s"
 alias ss="$_dev_path/shellScript/login.sh"
 alias ss100="$_dev_path/shellScript/login.sh -I 100"
+alias ss104="$_dev_path/shellScript/login.sh -I 104"
+alias ssaws="ssh ubuntu@ec2-54-199-171-173.ap-northeast-1.compute.amazonaws.com"
 alias con="$_dev_path/shellScript/login.sh -s -u console"
 alias upgrade="$_dev_path/shellScript/login.sh -a upgrade"
+alias upgradew="$_dev_path/shellScript/login.sh -a upgrade -t wms -I 104"
 alias debug="$_dev_path/shellScript/login.sh -u root -a debug -d"
 alias casetest="$_dev_path/shellScript/caseTest.sh"
 alias setip="$_dev_path/tcl/setup_ip.tcl"
+alias gittree="git log --graph --oneline --all --decorate=short"
 
 alias war3="wine /data/Game/WarcraftIII/war3.exe -opengl -windows"
 
