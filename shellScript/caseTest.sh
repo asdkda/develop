@@ -112,12 +112,13 @@ echo "What case do you want to test ?" > $tmp_file
 i=1
 FILE=()
 FILEDESC=()
-for file in `ls $DIR/${ARRAY[$(($ans-1))]}/`
+select_dir=$DIR/${ARRAY[$(($ans-1))]}
+for file in `ls $select_dir/`
 do
 	echo $i. $file >> $tmp_file
 	i=$(($i+1))
 	FILE+=("${ARRAY[$(($ans-1))]}/$file")
-	FILEDESC+=("`sed '3!d' $file | cut -d ' ' -f 2-`")
+	FILEDESC+=("`sed '3!d' $select_dir/$file | cut -d ' ' -f 2-`")
 done
 echo $i. all >> $tmp_file
 #echo "${FILE[@]}"

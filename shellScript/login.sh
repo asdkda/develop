@@ -57,10 +57,7 @@ do
 	case "$arg" in
 		--cdl) DEBUG_CDL=1 ;;
 		--help) args="${args}-h ";;
-		--port) PORT=${OPTARG} ;;
-#		--upgrade) args="${args}-a ";;
-#		--lmc) args="${args}-l ";;
-#		--wms) args="${args}-w ";;
+		--port) args="${args}-q ";;
 #		--test) TEST=1 ;;
 		# pass through anything else
 		*) [[ "${arg:0:1}" == "-" ]] || delim="\""
@@ -70,7 +67,7 @@ done
 # reset the translated args
 eval set -- $args
 # now we can process with getopt
-while getopts "a:cd:i:I:p:st:u:h" OPTION
+while getopts "a:cd:i:I:p:q:st:u:h" OPTION
 do
 	case ${OPTION} in
 		a)
@@ -90,6 +87,9 @@ do
 			;;
 		p)
 			COS_PASSWORD=${OPTARG}
+			;;
+		q)
+			PORT=${OPTARG}
 			;;
 		s)
 			PROTO="telnet"

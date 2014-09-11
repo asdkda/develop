@@ -36,6 +36,7 @@ alias debug="$_dev_path/shellScript/login.sh -u root -a debug -d"
 alias casetest="$_dev_path/shellScript/caseTest.sh"
 alias setip="$_dev_path/tcl/setup_ip.tcl"
 alias gittree="git log --graph --oneline --all --decorate=short"
+alias gitrebase="git rebase verify^ verify --onto"
 
 alias war3="wine /data/Game/WarcraftIII/war3.exe -opengl -windows"
 

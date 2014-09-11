@@ -31,6 +31,8 @@ alias upgrade="$_dev_path/shellScript/login.sh -a upgrade"
 alias debug="$_dev_path/shellScript/login.sh -u root -a debug -d"
 alias casetest="$_dev_path/shellScript/caseTest.sh"
 alias setip="$_dev_path/tcl/setup_ip.tcl"
+alias gittree="git log --graph --oneline --all --decorate=short"
+alias gitrebase="git rebase verify^ verify --onto"
 
 
 source $_dev_path/shellScript/bashDirB

@@ -13,7 +13,7 @@ set folder 			""
 set so_name_path	""
 set so_name 		""
 set device_so_path	""
-set killDaemon		"killall -q ipsec udhcpc wpa_supplicant imgupd_updater wvdial fcapsd fcaps_cmd mobilityd platformd daemon_monitor gpsd ; killall -9 fcapsd recorder platformd"
+set killDaemon		"killall -q ipsec udhcpc wpa_supplicant imgupd_updater wvdial fcapsd fcaps_cmd mobilityd platformd daemon_monitor gpsd ; killall -9 fcapsd recorder platformd gobisierra slqssdk"
 set restartDaemon	"sleep 5; /opt/lilee/sbin/daemon_monitor"
 
 # debug <target dir> <copy xml ?> <is wms ?>
@@ -71,6 +71,9 @@ if { $mod_name == "fcapsd" } {
 	}
 	file copy -force $folder/fcapsd /${TFTPBOOT}
 }
+if { $mod_name == "mobilityd" } {
+	file copy -force $folder/mobilityd /${TFTPBOOT}
+}
 
 
 # cgt
@@ -126,6 +129,9 @@ if {[string range $so_name 0 5 ] != "lilee_" } {
 config_command "$killDaemon"
 if { $mod_name == "fcapsd" } {
 	config_command "curl http://$SELF_IP/${TFTPBOOT}/fcapsd -o /opt/lilee/bin/fcapsd"
+}
+if { $mod_name == "mobilityd" } {
+	config_command "curl http://$SELF_IP/${TFTPBOOT}/mobilityd -o /opt/lilee/bin/mobilityd"
 }
 # init env
 config_command "ulimit -c unlimited; ulimit -s 1024; export UV_THREADPOOL_SIZE=2"
