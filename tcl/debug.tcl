@@ -13,7 +13,7 @@ set folder 			""
 set so_name_path	""
 set so_name 		""
 set device_so_path	""
-set killDaemon		"killall -q ipsec udhcpc wpa_supplicant imgupd_updater wvdial fcapsd fcaps_cmd mobilityd platformd daemon_monitor gpsd ; killall -9 fcapsd recorder platformd gobisierra slqssdk"
+set killDaemon		"killall -q ipsec udhcpc wpa_supplicant imgupd_updater wvdial fcapsd fcaps_cmd mobilityd platformd daemon_monitor gpsd imgupd_scheduler ; killall -9 fcapsd recorder platformd gobisierra slqssdk"
 set restartDaemon	"sleep 5; /opt/lilee/sbin/daemon_monitor"
 
 # debug <target dir> <copy xml ?> <is wms ?>
@@ -44,7 +44,7 @@ if { [catch {set so_name_path [glob -directory $folder *.so]} msg] } {
 	file delete $so_name_path
 }
 
-# check evnsetup.sh
+# check envsetup.sh
 set env_path "../envsetup.sh"
 if { [file isfile $env_path] == 0 } {
 	set env_path "../build/envsetup.sh"
@@ -54,7 +54,7 @@ if { [file isfile $env_path] == 0 } {
 	}
 }
 
-# make
+# make & copy so to tftp server
 if { [catch {exec sh -c ". $env_path $ && make -C $folder > /dev/null"} msg] } {
 	puts "\033\[31mBuild error!\033\[0m"
 	puts $msg
@@ -62,6 +62,15 @@ if { [catch {exec sh -c ". $env_path $ && make -C $folder > /dev/null"} msg] } {
 } else {
 	puts "Build Success!"
 }
+if { [catch {set so_name_path [glob -directory $folder *.so]} msg] } {
+	# not found
+	puts "$msg in $folder"
+	exit 1
+}
+set so_name [file tail $so_name_path]
+file copy -force $so_name_path /${TFTPBOOT}
+
+# build extra bin
 if { $mod_name == "fcapsd" } {
 	set folder "$mod_name/code/make/make_fcapsd"
 	if { [catch {exec sh -c ". $env_path $ && make -C $folder > /dev/null"} msg] } {
@@ -70,18 +79,28 @@ if { $mod_name == "fcapsd" } {
 		puts "\n"
 	}
 	file copy -force $folder/fcapsd /${TFTPBOOT}
+#	file delete $mod_name/code/make/make_fcapsd/fcapsd
+#	file delete $mod_name/code/make/make_cli_transfer/fcaps_cmd
+#	file delete $mod_name/code/make/make_daemon_monitor/daemon_monitor
+#	file delete $mod_name/code/make/make_fcapsd_so/libfcapsd.so
+#	set folder "$mod_name/code/make/make_fcapsd_so"
+} elseif { $mod_name == "mobilityd" } {
+	file copy -force $folder/$mod_name /${TFTPBOOT}
+} elseif { $mod_name == "platformd" } {
+	set folder "$mod_name"
+	if { [catch {exec sh -c ". $env_path $ && make -C $folder > /dev/null"} msg] } {
+		puts "\033\[31mBuild error!\033\[0m"
+		puts $msg
+		puts "\n"
+	}
+	file copy -force $folder/$mod_name /${TFTPBOOT}
+	if { [file exist $folder/libplatformd.so] } {
+		file copy -force $folder/libplatformd.so /${TFTPBOOT}
+	}
+	if { [file exist $folder/ext/product_specific.so] } {
+		file copy -force $folder/ext/product_specific.so /${TFTPBOOT}
+	}
 }
-if { $mod_name == "mobilityd" } {
-	file copy -force $folder/mobilityd /${TFTPBOOT}
-}
-
-
-# cgt
-#if {$argc > 1} {
-#	exec sh -c ". $env_path && cd ../tools && make"
-#	exec sh -c ". $env_path && make generate_cli"
-#	exec sh -c "rm -rf tmp.*"
-#}
 
 # cdl
 if {$cdl == 1} {
@@ -89,32 +108,12 @@ if {$cdl == 1} {
 	exec sh -c "cd cdl_output && tar -cvf cdl.tar ./*"
 }
 
-# copy so to tftp server
-if { $mod_name == "fcapsd" } {
-#	file delete $mod_name/code/make/make_fcapsd/fcapsd
-#	file delete $mod_name/code/make/make_cli_transfer/fcaps_cmd
-#	file delete $mod_name/code/make/make_daemon_monitor/daemon_monitor
-#	file delete $mod_name/code/make/make_fcapsd_so/libfcapsd.so
-	set folder "$mod_name/code/make/make_fcapsd_so"
-}
-
-if { [catch {set so_name_path [glob -directory $folder *.so]} msg] } {
-	# not found
-	puts "$msg in $folder"
-	exit 1
-}
-
-set so_name [file tail $so_name_path]
-set device_so_path "/opt/lilee/lib/fcaps/$so_name"
-file copy -force $so_name_path /${TFTPBOOT}
 
 # connect to TARGET device
 spawn ssh $USER@$TARGET_IP
 login_device_ssh $PASSWD
 
 if {$cdl == 1} {
-#	file copy -force ../tools/cli_gen_tool/clish_xml/cli.xml /tftp
-#	config_command "tftp -g -r cli.xml $SELF_IP -l /etc/clish/cli.xml"
 	file copy -force cdl_output/cdl.tar /${TFTPBOOT}
 	config_command "rm -rf /opt/lilee/etc/clish/* ; curl -O http://$SELF_IP/${TFTPBOOT}/cdl.tar ; tar xf cdl.tar -C /opt/lilee/etc/clish"
 	
@@ -124,14 +123,25 @@ if {$cdl == 1} {
 
 if {[string range $so_name 0 5 ] != "lilee_" } {
 	set device_so_path "/opt/lilee/lib/$so_name"
+} else {
+	set device_so_path "/opt/lilee/lib/fcaps/$so_name"
 }
 
 config_command "$killDaemon"
 if { $mod_name == "fcapsd" } {
-	config_command "curl http://$SELF_IP/${TFTPBOOT}/fcapsd -o /opt/lilee/bin/fcapsd"
+	config_command "curl http://$SELF_IP/${TFTPBOOT}/$mod_name -o /opt/lilee/bin/$mod_name"
 }
 if { $mod_name == "mobilityd" } {
-	config_command "curl http://$SELF_IP/${TFTPBOOT}/mobilityd -o /opt/lilee/bin/mobilityd"
+	config_command "curl http://$SELF_IP/${TFTPBOOT}/$mod_name -o /opt/lilee/bin/$mod_name"
+}
+if { $mod_name == "platformd" } {
+	config_command "curl http://$SELF_IP/${TFTPBOOT}/$mod_name -o /opt/lilee/bin/$mod_name"
+	if { [file exist $folder/libplatformd.so] } {
+		config_command "curl http://$SELF_IP/${TFTPBOOT}/libplatformd.so -o /opt/lilee/lib/libplatformd.so"
+	}
+	if { [file exist $folder/ext/product_specific.so] } {
+		config_command "curl http://$SELF_IP/${TFTPBOOT}/product_specific.so -o /opt/lilee/lib/platformd/ext/product_specific.so"
+	}
 }
 # init env
 config_command "ulimit -c unlimited; ulimit -s 1024; export UV_THREADPOOL_SIZE=2"
