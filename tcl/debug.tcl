@@ -39,7 +39,7 @@ if { $mod_name == "fcapsd" } {
 # remove if so exist
 if { [catch {set so_name_path [glob -directory $folder *.so]} msg] } {
 	# not found
-#	puts "$msg in $folder"
+#	error_log "$msg in $folder"
 } else {
 	file delete $so_name_path
 }
@@ -49,35 +49,33 @@ set env_path "../envsetup.sh"
 if { [file isfile $env_path] == 0 } {
 	set env_path "../build/envsetup.sh"
 	if { [file isfile $env_path] == 0 } {
-		puts "can't find env_path"
+		error_log "can't find env_path"
 		exit
 	}
 }
 
 # make & copy so to tftp server
 if { [catch {exec sh -c ". $env_path $ && make -C $folder > /dev/null"} msg] } {
-	puts "\033\[31mBuild error!\033\[0m"
-	puts $msg
-	puts "\n"
+	error_log "Build warning/error!"
 } else {
-	puts "Build Success!"
+	info_log "Build Success!"
 }
 if { [catch {set so_name_path [glob -directory $folder *.so]} msg] } {
 	# not found
-	puts "$msg in $folder"
+	error_log "$msg in $folder"
 	exit 1
 }
 set so_name [file tail $so_name_path]
+puts "file copy -force $so_name_path /${TFTPBOOT}"
 file copy -force $so_name_path /${TFTPBOOT}
 
 # build extra bin
 if { $mod_name == "fcapsd" } {
 	set folder "$mod_name/code/make/make_fcapsd"
 	if { [catch {exec sh -c ". $env_path $ && make -C $folder > /dev/null"} msg] } {
-		puts "\033\[31mBuild error!\033\[0m"
-		puts $msg
-		puts "\n"
+		error_log "Build warning/error!"
 	}
+	puts "file copy -force $folder/fcapsd /${TFTPBOOT}"
 	file copy -force $folder/fcapsd /${TFTPBOOT}
 #	file delete $mod_name/code/make/make_fcapsd/fcapsd
 #	file delete $mod_name/code/make/make_cli_transfer/fcaps_cmd
@@ -85,20 +83,31 @@ if { $mod_name == "fcapsd" } {
 #	file delete $mod_name/code/make/make_fcapsd_so/libfcapsd.so
 #	set folder "$mod_name/code/make/make_fcapsd_so"
 } elseif { $mod_name == "mobilityd" } {
+	puts "file copy -force $folder/$mod_name /${TFTPBOOT}"
 	file copy -force $folder/$mod_name /${TFTPBOOT}
 } elseif { $mod_name == "platformd" } {
 	set folder "$mod_name"
 	if { [catch {exec sh -c ". $env_path $ && make -C $folder > /dev/null"} msg] } {
-		puts "\033\[31mBuild error!\033\[0m"
-		puts $msg
-		puts "\n"
+		error_log "Build warning/error!"
 	}
+	puts "file copy -force $folder/$mod_name /${TFTPBOOT}"
 	file copy -force $folder/$mod_name /${TFTPBOOT}
 	if { [file exist $folder/libplatformd.so] } {
+		puts "file copy -force $folder/libplatformd.so /${TFTPBOOT}"
 		file copy -force $folder/libplatformd.so /${TFTPBOOT}
 	}
 	if { [file exist $folder/ext/product_specific.so] } {
+		puts "file copy -force $folder/ext/product_specific.so /${TFTPBOOT}"
 		file copy -force $folder/ext/product_specific.so /${TFTPBOOT}
+	}
+} elseif { $mod_name == "intf_mgmt" } {
+	set folder "$mod_name/intfindex"
+	if { [catch {exec sh -c ". $env_path $ && make -C $folder > /dev/null"} msg] } {
+		error_log "Build warning/error!"
+	}
+	if { [file exist $folder/libintfindex.so] } {
+		puts "file copy -force $folder/libintfindex.so /${TFTPBOOT}"
+		file copy -force $folder/libintfindex.so /${TFTPBOOT}
 	}
 }
 
@@ -114,6 +123,7 @@ spawn ssh $USER@$TARGET_IP
 login_device_ssh $PASSWD
 
 if {$cdl == 1} {
+	puts "file copy -force cdl_output/cdl.tar /${TFTPBOOT}"
 	file copy -force cdl_output/cdl.tar /${TFTPBOOT}
 	config_command "rm -rf /opt/lilee/etc/clish/* ; curl -O http://$SELF_IP/${TFTPBOOT}/cdl.tar ; tar xf cdl.tar -C /opt/lilee/etc/clish"
 	
@@ -127,14 +137,13 @@ if {[string range $so_name 0 5 ] != "lilee_" } {
 	set device_so_path "/opt/lilee/lib/fcaps/$so_name"
 }
 
+info_log "\nkill all daemons"
 config_command "$killDaemon"
 if { $mod_name == "fcapsd" } {
 	config_command "curl http://$SELF_IP/${TFTPBOOT}/$mod_name -o /opt/lilee/bin/$mod_name"
-}
-if { $mod_name == "mobilityd" } {
+} elseif { $mod_name == "mobilityd" } {
 	config_command "curl http://$SELF_IP/${TFTPBOOT}/$mod_name -o /opt/lilee/bin/$mod_name"
-}
-if { $mod_name == "platformd" } {
+} elseif { $mod_name == "platformd" } {
 	config_command "curl http://$SELF_IP/${TFTPBOOT}/$mod_name -o /opt/lilee/bin/$mod_name"
 	if { [file exist $folder/libplatformd.so] } {
 		config_command "curl http://$SELF_IP/${TFTPBOOT}/libplatformd.so -o /opt/lilee/lib/libplatformd.so"
@@ -142,8 +151,14 @@ if { $mod_name == "platformd" } {
 	if { [file exist $folder/ext/product_specific.so] } {
 		config_command "curl http://$SELF_IP/${TFTPBOOT}/product_specific.so -o /opt/lilee/lib/platformd/ext/product_specific.so"
 	}
+} elseif { $mod_name == "intf_mgmt" } {
+	config_command "curl http://$SELF_IP/${TFTPBOOT}/$mod_name -o /opt/lilee/bin/$mod_name"
+	if { [file exist $folder/libintfindex.so] } {
+		config_command "curl http://$SELF_IP/${TFTPBOOT}/libintfindex.so -o /opt/lilee/lib/libintfindex.so"
+	}
 }
-# init env
+
+info_log "\nrestart fcapsd"
 config_command "ulimit -c unlimited; ulimit -s 1024; export UV_THREADPOOL_SIZE=2"
 config_command "curl http://$SELF_IP/${TFTPBOOT}/$so_name -o $device_so_path ; $restartDaemon"
 

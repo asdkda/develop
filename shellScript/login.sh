@@ -17,7 +17,7 @@ DEFAULT_ROOT_PASSWD=$LILEE_PW
 DEFAULT_ROOT_PASSWD2=$ROOT_PW
 ECHO=""
 
-DEBUG_SO=""
+DEBUG_PATH=""
 DEBUG_CDL=0
 
 usage() {
@@ -77,7 +77,7 @@ do
 			ECHO=yes
 			;;
 		d)
-			DEBUG_SO=${OPTARG}
+			DEBUG_PATH=${OPTARG}
 			;;
 		i)
 			IP=${OPTARG}
@@ -157,8 +157,8 @@ if [ -n "$ACTION" ]; then
 		echo "$TCL_SRC/updateImage.tcl $IP $TYPE $PROTO $PORT $ECHO"
 		eval $TCL_SRC/updateImage.tcl $IP $TYPE $PROTO $PORT $ECHO
 	elif [ $ACTION = "debug" ]; then
-		echo "$TCL_SRC/debug.tcl $USER $PASSWORD $IP $DEBUG_SO $DEBUG_CDL"
-		eval $TCL_SRC/debug.tcl $USER $PASSWORD $IP $DEBUG_SO $DEBUG_CDL
+		echo "$TCL_SRC/debug.tcl $USER $PASSWORD $IP ${DEBUG_PATH%/} $DEBUG_CDL"
+		eval $TCL_SRC/debug.tcl $USER $PASSWORD $IP ${DEBUG_PATH%/} $DEBUG_CDL
 	#elif [ $ACTION = "test" ]; then
 	#	echo ""
 	fi

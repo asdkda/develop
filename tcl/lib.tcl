@@ -217,6 +217,10 @@ proc check_array_size {array expect_len command} {
 	}
 }
 
+proc info_log {log} {
+	puts "${::GREENF}$log${::RESET}"
+}
+
 proc error_log {log} {
 	puts "${::REDF}$log${::RESET}"
 }
