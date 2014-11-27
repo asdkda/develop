@@ -14,7 +14,8 @@ List=("marconi   10.2.10.100" "$path/login.sh -I 100"
       "builder32 10.1.10.40"  "$path/login.sh -i 10.1.10.40 -u root -p $LILEE_PW5"
       "root      gozilla"     "$path/login.sh -i gozilla -u root"
       "root      gamera"      "$path/login.sh -i gamera -u root"
-      "ethan"                 "$path/login.sh -i ethan-yang.no-ip.org -u $CUSTOM_PW")
+      "ethan"                 "$path/login.sh -i ethan-yang.no-ip.org -u $CUSTOM_PW -p $LILEE_PW"
+      "ethan console"         "$path/login.sh -s -i ethan-yang.no-ip.org --port 3001")
 
 display() {
 	echo "console: $CONSOLE_IP $CONSOLE_PORT"
