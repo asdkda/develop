@@ -13,7 +13,7 @@ set folder 			""
 set so_name_path	""
 set so_name 		""
 set device_so_path	""
-set killDaemon		"killall -q ipsec udhcpc wpa_supplicant imgupd_updater wvdial fcapsd fcaps_cmd mobilityd platformd daemon_monitor gpsd imgupd_scheduler ; killall -9 fcapsd recorder platformd gobisierra slqssdk"
+set killDaemon		"killall -q ipsec udhcpc wpa_supplicant wvdial fcapsd fcaps_cmd mobilityd platformd daemon_monitor gpsd imgupd_scheduler gobiutils; killall -9 fcapsd recorder platformd gobisierra slqssdk webfs imgupd_updater; sleep 1"
 set restartDaemon	"sleep 5; /opt/lilee/sbin/daemon_monitor"
 
 
